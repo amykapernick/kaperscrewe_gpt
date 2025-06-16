@@ -5,6 +5,7 @@ dist
 
 # Azure Functions
 .local.settings.json
+local.settings.json
 funcpack.zip
 
 # Logs
