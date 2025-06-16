@@ -1,6 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { generateResponse as askPrimary } from '../api/openai';
-import { askFallbackGPT } from '../api/gpt-fallback';
+import { askFallbackGPT } from '../api/gptFallback';
 
 function looksUseless(response: string): boolean {
   const fallbackTriggers = [
@@ -10,7 +10,7 @@ function looksUseless(response: string): boolean {
     "cannot find",
     "insufficient information",
   ];
-  return fallbackTriggers.some(phrase => response.toLowerCase().includes(phrase));
+  return fallbackTriggers.some((phrase) => response.toLowerCase().includes(phrase));
 }
 
 export async function generateResponse(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
@@ -40,7 +40,6 @@ export async function generateResponse(request: HttpRequest, context: Invocation
   }
 }
 
-// Register function with Azure runtime
 app.http('generateResponse', {
   methods: ['POST'],
   authLevel: 'anonymous',

@@ -1,16 +1,14 @@
-import { OpenAIClient, AzureKeyCredential } from '@azure/openai';
-import dotenv from 'dotenv';
+import OpenAI from 'openai';
 
-dotenv.config();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
 
-const client = new OpenAIClient(
-  process.env.AZURE_OPENAI_ENDPOINT!,
-  new AzureKeyCredential(process.env.AZURE_OPENAI_KEY!)
-);
+export async function generateResponse(prompt: string): Promise<string> {
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [{ role: 'user', content: prompt }],
+  });
 
-export async function generateResponse(prompt: string) {
-  const deploymentId = 'gpt-4'; // Customize if needed
-  const messages = [{ role: 'user', content: prompt }];
-  const response = await client.getChatCompletions(deploymentId, messages);
-  return response.choices[0].message?.content ?? '';
+  return completion.choices[0]?.message?.content?.trim() ?? '';
 }
