@@ -1,17 +1,17 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY!,
+export const openai = new OpenAI({
+	apiKey: process.env.AZURE_OPENAI_KEY!,
+	baseURL: `${process.env.AZURE_OPENAI_ENDPOINT!}/openai/deployments/gpt-4`,
+	defaultQuery: { 'api-version': `2024-04-01-preview` },
+	defaultHeaders: { 'api-key': process.env.AZURE_OPENAI_KEY! },
 });
 
-const client = new OpenAIClient(
-	process.env.AZURE_OPENAI_ENDPOINT!,
-	new AzureKeyCredential(process.env.AZURE_OPENAI_KEY!)
-);
-
 export async function generateResponse(prompt: string) {
-	const deploymentId = `gpt-4`; // Customize if needed
-	const messages = [{ role: `user`, content: prompt }];
-	const response = await client.getChatCompletions(deploymentId, messages);
-	return response.choices[0].message?.content ?? ``;
+	const response = await openai.chat.completions.create({
+		model: `gpt-4`, // still required for type compliance
+		messages: [{ role: `user`, content: prompt }],
+	});
+
+	return response.choices[0]?.message?.content?.trim() ?? ``;
 }

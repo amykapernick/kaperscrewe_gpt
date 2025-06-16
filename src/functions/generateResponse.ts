@@ -1,6 +1,7 @@
+import { app } from '@azure/functions';
 import { generateResponse as askPrimary } from '../api/openai';
 import { askFallbackGPT } from '../api/gptFallback';
-import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import type { HttpRequest, HttpResponseInit } from '@azure/functions';
 
 function looksUseless(response: string): boolean {
 	const fallbackTriggers = [
@@ -15,53 +16,35 @@ function looksUseless(response: string): boolean {
 	);
 }
 
-const httpTrigger: AzureFunction = async function (
-	context: Context,
+export async function generateResponse(
 	req: HttpRequest
-): Promise<void> {
-	const prompt = req.body?.prompt || `What is my current task status?`;
+): Promise<HttpResponseInit> {
+	const body = (await req.json()) as { prompt?: string };
+	const prompt = body?.prompt || `What is my current task status?`;
 	const primaryResponse = await askPrimary(prompt);
 
 	if (looksUseless(primaryResponse)) {
 		const fallbackResponse = await askFallbackGPT(prompt);
-		context.res = {
+		return {
 			status: 200,
-			body: {
+			body: JSON.stringify({
 				source: `fallback`,
 				original: primaryResponse,
 				fallback: fallbackResponse,
-			},
-		};
-	} else {
-		context.res = {
-			status: 200,
-			body: {
-				source: `primary`,
-				response: primaryResponse,
+			}),
+			headers: {
+				'Content-Type': `application/json`,
 			},
 		};
 	}
-};
 
-	if (looksUseless(primaryResponse)) {
-		const fallbackResponse = await askFallbackGPT(prompt);
-		return {
-			status: 200,
-			jsonBody: {
-				source: `fallback`,
-				original: primaryResponse,
-				fallback: fallbackResponse,
-			},
-		};
-	} else {
-		return {
-			status: 200,
-			jsonBody: {
-				source: `primary`,
-				response: primaryResponse,
-			},
-		};
-	}
+	return {
+		status: 200,
+		body: JSON.stringify({
+			source: `primary`,
+			response: primaryResponse,
+		}),
+	};
 }
 
 app.http(`generateResponse`, {

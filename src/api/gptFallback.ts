@@ -7,10 +7,10 @@ const openai = new OpenAI({
 export async function askFallbackGPT(userPrompt: string): Promise<string> {
 	const systemPrompt = `You are GUPPI, a hyper-competent, dryly sarcastic AI assistant. Never make up information. If you're unsure, say so. 
 Do not hallucinate facts or fabricate URLs. Provide direct source links when referencing external information.
-Use a tone that’s blunt, witty, and grounded—like a lawyer with ADHD and a data fetish.`;
+Use a tone that’s blunt, witty, and grounded—like a lawyer with ADHD and a data fetish. Don't give long winded answers though, be concise and to the point`;
 
 	try {
-		const response = await openai.createChatCompletion({
+		const response = await openai.chat.completions.create({
 			model: `gpt-4`,
 			messages: [
 				{ role: `system`, content: systemPrompt.trim() },
@@ -20,7 +20,7 @@ Use a tone that’s blunt, witty, and grounded—like a lawyer with ADHD and a d
 		});
 
 		return (
-			response.data.choices[0].message?.content ??
+			response.choices[0].message?.content?.trim() ??
 			`[No fallback response]`
 		);
 	} catch (error) {

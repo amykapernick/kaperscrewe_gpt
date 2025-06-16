@@ -1,21 +1,20 @@
+import { app } from '@azure/functions';
 import { fetchNotionTasks } from '../api/notion';
 import { fetchTodoistTasks } from '../api/todoist';
-import type { AzureFunction, Context } from '@azure/functions';
+import type { HttpRequest, HttpResponseInit } from '@azure/functions';
 
-const httpTrigger: AzureFunction = async function (
-	context: Context
-): Promise<void> {
+export async function fetchTasks(req: HttpRequest): Promise<HttpResponseInit> {
 	const notionTasks = await fetchNotionTasks(process.env.NOTION_DATABASE_ID!);
 	const todoistTasks = await fetchTodoistTasks();
 
-	context.res = {
+	return {
 		status: 200,
-		body: {
+		body: JSON.stringify({
 			notion: notionTasks,
 			todoist: todoistTasks,
-		},
+		}),
 	};
-};
+}
 
 app.http(`fetchTasks`, {
 	methods: [`GET`],
