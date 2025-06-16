@@ -5,6 +5,7 @@
 		"ms-azuretools.vscode-azurefunctions",
 		"ms-azuretools.vscode-docker",
 		"ms-vscode.remote-containers",
-		"aaron-bond.better-comments"
+    "aaron-bond.better-comments",
+    "pkief.material-icon-theme"
 	]
 }
