@@ -20,5 +20,5 @@ Use a tone that’s blunt, witty, and grounded—like a lawyer with ADHD and a d
     temperature: 0.3, // lower temp = more cautious, less prone to BS
   });
 
-  return response.data.choices[0].message?.content ?? '[No fallback response]';
+  const result = response.choices[0]?.message?.content?.trim() ?? '';
 }

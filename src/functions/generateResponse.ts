@@ -14,7 +14,7 @@ function looksUseless(response: string): boolean {
 }
 
 export async function generateResponse(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-  const body = await request.json();
+  const body = (await request.json()) as { prompt?: string };
   const prompt = body?.prompt || 'What is my current task status?';
 
   const primaryResponse = await askPrimary(prompt);
