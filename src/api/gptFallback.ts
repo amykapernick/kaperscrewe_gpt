@@ -10,7 +10,7 @@ Do not hallucinate facts or fabricate URLs. Provide direct source links when ref
 Use a tone that’s blunt, witty, and grounded—like a lawyer with ADHD and a data fetish.`;
 
 	try {
-		const response = await openai.chat.completions.create({
+		const response = await openai.createChatCompletion({
 			model: `gpt-4`,
 			messages: [
 				{ role: `system`, content: systemPrompt.trim() },
@@ -19,7 +19,10 @@ Use a tone that’s blunt, witty, and grounded—like a lawyer with ADHD and a d
 			temperature: 0.3, // lower temp = more cautious, less prone to BS
 		});
 
-		return response.choices[0]?.message?.content?.trim() ?? 'No response';
+		return (
+			response.data.choices[0].message?.content ??
+			`[No fallback response]`
+		);
 	} catch (error) {
 		return `Error generating fallback response. ${error}`;
 	}

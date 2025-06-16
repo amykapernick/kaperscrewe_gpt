@@ -1,7 +1,6 @@
-import { app } from '@azure/functions';
 import { generateResponse as askPrimary } from '../api/openai';
 import { askFallbackGPT } from '../api/gptFallback';
-import type { HttpRequest, HttpResponseInit } from '@azure/functions';
+import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
 
 function looksUseless(response: string): boolean {
 	const fallbackTriggers = [
@@ -16,13 +15,33 @@ function looksUseless(response: string): boolean {
 	);
 }
 
-export async function generateResponse(
-	request: HttpRequest
-): Promise<HttpResponseInit> {
-	const body = (await request.json()) as { prompt?: string };
-	const prompt = body?.prompt || `What is my current task status?`;
-
+const httpTrigger: AzureFunction = async function (
+	context: Context,
+	req: HttpRequest
+): Promise<void> {
+	const prompt = req.body?.prompt || `What is my current task status?`;
 	const primaryResponse = await askPrimary(prompt);
+
+	if (looksUseless(primaryResponse)) {
+		const fallbackResponse = await askFallbackGPT(prompt);
+		context.res = {
+			status: 200,
+			body: {
+				source: `fallback`,
+				original: primaryResponse,
+				fallback: fallbackResponse,
+			},
+		};
+	} else {
+		context.res = {
+			status: 200,
+			body: {
+				source: `primary`,
+				response: primaryResponse,
+			},
+		};
+	}
+};
 
 	if (looksUseless(primaryResponse)) {
 		const fallbackResponse = await askFallbackGPT(prompt);
