@@ -1,19 +1,11 @@
 {
-  "name": "Kapers Crewe GPT",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "settings": {
-    "terminal.integrated.defaultProfile.linux": "bash"
-  },
-  "extensions": [
-    "ms-azuretools.vscode-azurefunctions",
-    "ms-azuretools.vscode-cosmosdb",
-    "ms-vscode.azure-account",
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint"
-  ],
-  "forwardPorts": [7071],
-  "postCreateCommand": "npm install",
-  "remoteUser": "vscode"
+	"name": "Kapers Crewe GPT",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "20-bullseye"
+		}
+	},
+	"forwardPorts": [7071],
+	"postCreateCommand": "npm install"
 }
