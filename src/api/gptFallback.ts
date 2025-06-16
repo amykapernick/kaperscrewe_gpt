@@ -1,9 +1,8 @@
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
-const openai = new OpenAIApi(configuration);
 
 export async function askFallbackGPT(userPrompt: string): Promise<string> {
   const systemPrompt = `
@@ -12,7 +11,7 @@ Do not hallucinate facts or fabricate URLs. Provide direct source links when ref
 Use a tone that’s blunt, witty, and grounded—like a lawyer with ADHD and a data fetish.
 `;
 
-  const response = await openai.createChatCompletion({
+  const response = await openai.chat.completions.create({
     model: 'gpt-4',
     messages: [
       { role: 'system', content: systemPrompt.trim() },

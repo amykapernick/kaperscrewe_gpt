@@ -1,4 +1,4 @@
-import { OpenAIClient, AzureKeyCredential } from '@azure/ai-openai';
+import { OpenAIClient, AzureKeyCredential } from '@azure/openai';
 import dotenv from 'dotenv';
 
 dotenv.config();
