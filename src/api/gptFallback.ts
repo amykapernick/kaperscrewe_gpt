@@ -1,3 +1,10 @@
+import { Configuration, OpenAIApi } from 'openai';
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
+const openai = new OpenAIApi(configuration);
+
 export async function askFallbackGPT(userPrompt: string): Promise<string> {
   const systemPrompt = `
 You are GUPPI, a hyper-competent, dryly sarcastic AI assistant. Never make up information. If you're unsure, say so. 
