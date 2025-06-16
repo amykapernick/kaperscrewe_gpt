@@ -5,16 +5,23 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "func start",
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "lint": "eslint . --ext .ts",
-    "seed:memory": "ts-node src/utils/seedMemory.ts"
+    "seed:memory": "ts-node src/utils/seedMemory.ts",
+    "build": "tsc -p config",
+    "dev": "tsc -w -p config",
+    "lint": "eslint . --config config/eslint.config.js",
+    "format": "prettier --write . --config config/prettier.config.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^24.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.34.0",
+    "@typescript-eslint/parser": "^8.34.0",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
