@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'dist' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
 jobs:
@@ -29,19 +29,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: 'Resolve Project Dependencies Using Npm'
-        shell: pwsh
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           npm install
           npm run build --if-present
           npm run test --if-present
-          popd
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: dist/
 
   deploy:
     runs-on: ubuntu-latest
@@ -71,18 +69,18 @@ jobs:
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           
-      - name: 'Update Function App Settings'
-        uses: Azure/cli@v2
-        with:
-          inlineScript: |
-            az functionapp config appsettings set --name kaperscrewe-gpt \
-              --resource-group kaperscrewe-rg \
-              --settings \
-              NOTION_API_KEY=${{ secrets.NOTION_API_KEY }} \
-              TODOIST_API_TOKEN=${{ secrets.TODOIST_API_TOKEN }} \
-              COSMOS_DB_ENDPOINT=${{ secrets.COSMOS_DB_ENDPOINT }} \
-              COSMOS_DB_KEY=${{ secrets.COSMOS_DB_KEY }} \
-              AZURE_OPENAI_KEY=${{ secrets.AZURE_OPENAI_KEY }} \
-              AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} \
-              NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }} \
-              OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+      # - name: 'Update Function App Settings'
+      #   uses: Azure/cli@v2
+      #   with:
+      #     inlineScript: |
+      #       az functionapp config appsettings set --name kaperscrewe-gpt \
+      #         --resource-group kaperscrewe-rg \
+      #         --settings \
+      #         NOTION_API_KEY=${{ secrets.NOTION_API_KEY }} \
+      #         TODOIST_API_TOKEN=${{ secrets.TODOIST_API_TOKEN }} \
+      #         COSMOS_DB_ENDPOINT=${{ secrets.COSMOS_DB_ENDPOINT }} \
+      #         COSMOS_DB_KEY=${{ secrets.COSMOS_DB_KEY }} \
+      #         AZURE_OPENAI_KEY=${{ secrets.AZURE_OPENAI_KEY }} \
+      #         AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} \
+      #         NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }} \
+      #         OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
