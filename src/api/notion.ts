@@ -10,8 +10,8 @@ export async function fetchNotionTasks(databaseId: string) {
 	return response.results.map((page: any) => ({
 		id: page.id,
 		title: page.properties.Name.title[0]?.plain_text,
-		status: page.properties.Status?.select?.name,
-		due: page.properties.Due?.date?.start,
+		status: page.properties.Status?.status?.name,
+		due: page.properties.Due?.date?.start ? new Date(page.properties.Due.date.start).toISOString() : null,
 		platform: 'notion'
 	}));
 }

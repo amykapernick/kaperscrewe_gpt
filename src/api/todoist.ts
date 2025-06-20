@@ -13,7 +13,9 @@ export async function fetchTodoistTasks() {
 
 	return response.data.map((task: any) => ({
 		id: task.id,
-		content: task.content,
-		due: task.due?.date,
+		title: task.content,
+		due: task.due?.date ? new Date(task.due.date).toISOString() : null,
+		status: task.completed ? 'Done' : 'Not Started',
+		platform: 'todoist'
 	}));
 }

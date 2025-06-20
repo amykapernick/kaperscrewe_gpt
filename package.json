@@ -6,8 +6,9 @@
 	"scripts": {
 		"start": "func start",
 		"seed:memory": "ts-node src/utils/seedMemory.ts",
-		"build": "tsc -p config",
-		"dev": "tsc -w -p config",
+		"build": "npm run format && npm run lint && tsc -p config",
+		"dev": "concurrently \"npm run dev\" \"npm start\"",
+		"dev:watch": "tsc -w -p config",
 		"lint": "eslint . --config config/eslint.config.js --fix",
 		"format": "prettier --write . --config config/prettier.config.js"
 	},
@@ -17,6 +18,7 @@
 		"@types/node": "^24.0.1",
 		"@typescript-eslint/eslint-plugin": "^8.34.0",
 		"@typescript-eslint/parser": "^8.34.0",
+		"concurrently": "^9.1.2",
 		"eslint": "^9.29.0",
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-prettier": "^5.4.1",

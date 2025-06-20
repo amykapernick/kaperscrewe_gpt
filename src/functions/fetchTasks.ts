@@ -6,11 +6,12 @@ import type { HttpRequest, HttpResponseInit } from '@azure/functions';
 export async function fetchTasks(req: HttpRequest): Promise<HttpResponseInit> {
 	const notionTasks = await fetchNotionTasks(process.env.NOTION_DATABASE_ID!);
 	const todoistTasks = await fetchTodoistTasks();
+	const tasks = [...notionTasks, ...todoistTasks]	
 
 	return {
 		status: 200,
 		body: JSON.stringify({
-			tasks: [...notionTasks, ...todoistTasks],
+			tasks: tasks
 		}),
 	};
 }
@@ -20,3 +21,4 @@ app.http(`fetchTasks`, {
 	authLevel: `anonymous`,
 	handler: fetchTasks,
 });
+ 

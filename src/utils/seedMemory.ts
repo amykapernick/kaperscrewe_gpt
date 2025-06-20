@@ -1,4 +1,4 @@
-import { saveMemory } from './contextManager';
+import memoryClient from './contextManager';
 
 const seedData = [
 	`User asked for a summary of overdue tasks while procrastinating aggressively.`,
@@ -9,7 +9,7 @@ const seedData = [
 
 async function seed() {
 	for (const item of seedData) {
-		await saveMemory(item);
+		await memoryClient.saveMemory(item);
 		console.log(`Seeded: ${item}`);
 	}
 }

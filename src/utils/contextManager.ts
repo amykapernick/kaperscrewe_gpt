@@ -16,13 +16,15 @@ interface MemoryEntry {
 	id: string;
 	timestamp: string;
 	content: string;
+	prompt?: string;
 }
 
-async function saveMemory(content: string) {
+async function saveMemory(content: string, prompt?: string) {
 	const entry: MemoryEntry = {
 		id: Date.now().toString(),
 		timestamp: new Date().toISOString(),
 		content,
+		prompt: prompt || `No prompt provided`,
 	};
 	await container.items.create(entry);
 }

@@ -1,13 +1,12 @@
 import OpenAI from 'openai';
+import { promptSetup } from '../_data/setup';
 
 const openai = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY!,
 });
 
 export async function askFallbackGPT(userPrompt: string): Promise<string> {
-	const systemPrompt = `You are GUPPI, a hyper-competent, dryly sarcastic AI assistant. Never make up information. If you're unsure, say so. 
-Do not hallucinate facts or fabricate URLs. Provide direct source links when referencing external information.
-Use a tone that’s blunt, witty, and grounded—like a lawyer with ADHD and a data fetish. Don't give long winded answers though, be concise and to the point`;
+	const systemPrompt = `${promptSetup}`;
 
 	try {
 		const response = await openai.chat.completions.create({
