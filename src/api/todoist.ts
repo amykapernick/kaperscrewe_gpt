@@ -10,5 +10,6 @@ const todoistAPI = axios.create({
 
 export async function fetchTodoistTasks() {
 	const response = await todoistAPI.get(`/tasks`);
+
 	return response.data;
 }

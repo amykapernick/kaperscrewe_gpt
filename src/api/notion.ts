@@ -11,5 +11,6 @@ export async function fetchNotionTasks(databaseId: string) {
 		id: page.id,
 		title: page.properties.Name.title[0]?.plain_text,
 		status: page.properties.Status?.select?.name,
+		due: page.properties.Due?.date?.start,
 	}));
 }
