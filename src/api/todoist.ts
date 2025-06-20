@@ -11,5 +11,9 @@ const todoistAPI = axios.create({
 export async function fetchTodoistTasks() {
 	const response = await todoistAPI.get(`/tasks`);
 
-	return response.data;
+	return response.data.map((task: any) => ({
+		id: task.id,
+		content: task.content,
+		due: task.due?.date,
+	}));
 }

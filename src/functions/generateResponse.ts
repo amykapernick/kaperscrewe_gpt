@@ -21,28 +21,38 @@ export async function generateResponse(
 ): Promise<HttpResponseInit> {
 	const body = (await req.json()) as { prompt?: string };
 	const prompt = body?.prompt || `What is my current task status?`;
-	const primaryResponse = await askPrimary(prompt);
 
-	if (looksUseless(primaryResponse)) {
-		const fallbackResponse = await askFallbackGPT(prompt);
-		return {
-			status: 200,
-			body: JSON.stringify({
-				source: `fallback`,
-				original: primaryResponse,
-				fallback: fallbackResponse,
-			}),
-			headers: {
-				'Content-Type': `application/json`,
-			},
-		};
+	// Fetch tasks to check
+	const tasksResponse = await fetch(`${process.env.FUNCTION_BASE_URL}/api/fetchTasks`);
+	const { tasks } = await tasksResponse.json();
+	const existingMemory = await memoryClient.loadMemory?.() || ''
+
+	const fullPrompt = `
+		Tasks:
+		${tasks.map((t: any) => `- ${t.title} [due ${t.due}]`).join('\n')}
+
+		Memory:
+		${existingMemory || '[none]'}
+
+		User asked: "${prompt}"
+	`
+
+
+	let response = await askPrimary(fullPrompt);
+	let responseSource = `primary`;
+
+	if (looksUseless(response)) {
+		response = await askFallbackGPT(prompt);
+		responseSource = `fallback`;
 	}
+
+	await memoryClient.saveMemory?.(response);
 
 	return {
 		status: 200,
 		body: JSON.stringify({
-			source: `primary`,
-			response: primaryResponse,
+			source: responseSource,
+			response: response,
 		}),
 	};
 }

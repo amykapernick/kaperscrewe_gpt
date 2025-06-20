@@ -10,8 +10,7 @@ export async function fetchTasks(req: HttpRequest): Promise<HttpResponseInit> {
 	return {
 		status: 200,
 		body: JSON.stringify({
-			notion: notionTasks,
-			todoist: todoistTasks,
+			tasks: [...notionTasks, ...todoistTasks],
 		}),
 	};
 }

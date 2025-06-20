@@ -9,7 +9,7 @@ export const openai = new OpenAI({
 
 export async function generateResponse(prompt: string) {
 	const response = await openai.chat.completions.create({
-		model: `gpt-4`, // still required for type compliance
+		model: `gpt-4`, 
 		messages: [{ role: `user`, content: prompt }],
 	});
 
