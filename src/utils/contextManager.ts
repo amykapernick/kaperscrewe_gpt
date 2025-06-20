@@ -18,7 +18,7 @@ interface MemoryEntry {
 	content: string;
 }
 
-export async function saveMemory(content: string) {
+async function saveMemory(content: string) {
 	const entry: MemoryEntry = {
 		id: Date.now().toString(),
 		timestamp: new Date().toISOString(),
@@ -27,7 +27,7 @@ export async function saveMemory(content: string) {
 	await container.items.create(entry);
 }
 
-export async function loadMemory(limit: number = 5): Promise<MemoryEntry[]> {
+async function loadMemory(limit: number = 5): Promise<MemoryEntry[]> {
 	const query = {
 		query: `SELECT * FROM c ORDER BY c.timestamp DESC OFFSET 0 LIMIT @limit`,
 		parameters: [{ name: `@limit`, value: limit }],
@@ -38,9 +38,15 @@ export async function loadMemory(limit: number = 5): Promise<MemoryEntry[]> {
 	return resources;
 }
 
-export async function summarizeMemory(limit: number = 5): Promise<string> {
+async function summarizeMemory(limit: number = 5): Promise<string> {
 	const memory = await loadMemory(limit);
 	return memory
 		.map((entry) => `- [${entry.timestamp}]: ${entry.content}`)
 		.join(`\n`);
 }
+
+export default {
+	saveMemory,
+	loadMemory,
+	summarizeMemory,
+};

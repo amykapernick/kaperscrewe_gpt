@@ -2,6 +2,7 @@ import { app } from '@azure/functions';
 import { generateResponse as askPrimary } from '../api/openai';
 import { askFallbackGPT } from '../api/gptFallback';
 import type { HttpRequest, HttpResponseInit } from '@azure/functions';
+import memoryClient from '../utils/contextManager'
 
 function looksUseless(response: string): boolean {
 	const fallbackTriggers = [
